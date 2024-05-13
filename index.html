@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Telegram Mini Apps Vanilla JS Sample App</title>
+    <title>RSP Battle Game</title>
     <style>
         body {
             --bg-color: var(--tg-theme-bg-color);
@@ -36,10 +36,10 @@
             width: 100px;
             border-radius: 10px;
             background-color: rgb(255,165,0);
-            background: radial-gradient(#ffcb32, #ffbf00);
             color: white;
+<!--            background: radial-gradient(#ffcb32, #ffbf00);-->
         }
-        div.rules {
+        div.chapter {
             text-align: center;
         }
         ul.myUL {
@@ -53,80 +53,59 @@
             display: flex;
             justify-content: center;
         }
-<!--        #viewport:after {-->
-<!--            content: '';-->
-<!--            display: block;-->
-<!--            position: absolute;-->
-<!--            left: 0;-->
-<!--            right: 0;-->
-<!--            top: 0;-->
-<!--            bottom: 0;-->
-<!--            border-width: 4px;-->
-<!--            border-style: solid;-->
-<!--            border-image: linear-gradient(45deg, rgba(64, 224, 208, .5), rgba(173, 255, 47, .5)) 1;-->
-<!--        }-->
-
-<!--        #viewport-params-size,-->
-<!--        #viewport-params-expand {-->
-<!--            content: attr(text);-->
-<!--            position: absolute;-->
-<!--            display: inline-block;-->
-<!--            background: var(&#45;&#45;tg-theme-link-color, rgb(64, 224, 208));-->
-<!--            right: 4px;-->
-<!--            left: auto;-->
-<!--            font-size: 8px;-->
-<!--            padding: 4px;-->
-<!--            vertical-align: top;-->
-<!--        }-->
-<!--        #viewport-params-size {-->
-<!--            top: 4px;-->
-<!--        }-->
-<!--        #viewport-params-expand {-->
-<!--            top: 30px;-->
-<!--        }-->
+        .active {
+            background-color: green;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
     <main>
-        <div class="main" align="center">
+        <div id="main" class="main" align="center">
             <h1>RSP Battle</h1>
             <div class="page-wrapper" align="center">
                 <div class="choice">
-                    <img src="images/stats.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="show('stats')">Статистика</button>
+                    <img src="images/stats.png" alt="Stats Icon" style="width:70;height:70px;"><br>
+                    <button onclick="show_hide('stats', 'main')">Статистика</button>
                 </div>
                 <div class="choice">
-                    <img src="images/play.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="show('game')">Играть</button>
+                    <img src="images/play.png" alt="Game Icon" style="width:70;height:70px;"><br>
+                    <button onclick="show_hide('game', 'main')">Играть</button>
                 </div>
                 <div class="choice">
-                    <img src="images/rules.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="show('rules')">Правила</button>
+                    <img src="images/rules.png" alt="Rules Icon" style="width:70;height:70px;"><br>
+                    <button onclick="show_hide('rules', 'main')">Правила</button>
                 </div>
             </div>
         </div>
-        <div id="stats" class="stats" align="center">
+        <div id="stats" style="display:none;" class="chapter" align="center">
             <h1>Статистика</h1>
+            <div align="center">
+                <button onclick="show_hide('main','stats')">Назад</button>
+            </div>
         </div>
-        <div id="game" align="center">
+        <div id="game" style="display:none;" align="center">
             <h1>Играть</h1>
             <div class="page-wrapper" align="center">
                 <div class="choice">
                     <img src="images/rock.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="toggleMainButton();">Камень</button>
+                    <button class="choice_btn" id="rock">Камень</button>
                 </div>
                 <div class="choice">
-                    <img src="images/scissors.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="toggleMainButton();">Ножницы</button>
+                    <img src="images/scissors.png" alt="Scissors Icon" style="width:70;height:70px;"><br>
+                    <button class="choice_btn" id="scissors" onclick="">Ножницы</button>
                 </div>
                 <div class="choice">
-                    <img src="images/paper.png" alt="Rock Icon" style="width:70;height:70px;"><br>
-                    <button onclick="toggleMainButton();">Бумага</button>
+                    <img src="images/paper.png" alt="Paper Icon" style="width:70;height:70px;"><br>
+                    <button class="choice_btn" id="paper" onclick="">Бумага</button>
                 </div>
             </div>
+            <div align="center">
+                <br><button  onclick="show_hide('main','game')">Назад</button>
+            </div>
         </div>
-        <div id="rules" class="rules">
+        <div id="rules"  style="display:none;" class="chapter">
             <h1>Правила</h1>
             <ul class="myUL">
                 <li>
@@ -139,6 +118,9 @@
                     Третье правило.
                 </li>
             </ul>
+            <div align="center">
+                <button  onclick="show_hide('main','rules')">Назад</button>
+            </div>
         </div>
     </main>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -194,14 +176,27 @@
         });
 
 
-        function show(chapter) {
-            var x = document.getElementById(chapter);
+        function show_hide(show, hide) {
+            var x = document.getElementById(show);
             if (x.style.display === "none") {
                 x.style.display = "block";
+                document.getElementById(hide).style.display = "none";
             } else {
                 x.style.display = "none";
             }
         }
+        var header = document.getElementById("game");
+        var btns = header.getElementsByClassName("choice_btn");
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].addEventListener("click", function() {
+            var current = document.getElementsByClassName("active");
+            if (current.length > 0) {
+                current[0].className = current[0].className.replace(" active", "");
+                    }
+                this.className += " active";
+                });
+            }
+
     </script>
 </body>
 </html>
